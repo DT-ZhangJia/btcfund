@@ -1,0 +1,1 @@
+User {{ mailuser.username }} has joined.

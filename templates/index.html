@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}数字币定投计划{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+
+    美元汇率： {{ fex }} 
+    <br />
+    持仓估值： {{ cnysumround }} &nbsp 投入本金： {{ mybaseinvestround }} &nbsp 盈亏：{{ gain }} %
+    <br />
+    <br />
+    <table class="table table-striped">
+    <tread><tr><th>数字币</th><th>持仓量</th><th>CNY估值</th></tr></tread>
+    <tbody>
+    {% for k,v in portfolio.items() %}
+    <tr>
+    <td>{{ k }}</td><td>{{ v[0] }}</td><td>{{ v[1] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    
+</div>
+
+{% endblock %}
