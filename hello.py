@@ -12,7 +12,7 @@ from flask_wtf import FlaskForm# as Form
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import Required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import distinct
+from sqlalchemy import distinct, func
 from flask_migrate import Migrate, MigrateCommand
 from flask_mail import Mail, Message
 from binance.client import Client
@@ -60,6 +60,7 @@ class Base(mydb.Model):
     __tablename__ = 'base'
     iddd = mydb.Column(mydb.Integer, primary_key=True, unique=True, index=True)
     invest = mydb.Column(mydb.Float)
+    date = mydb.Column(mydb.Date)
 
 
 
@@ -97,8 +98,8 @@ def index():
     res = res.read()
     fex = float(eval(res)['rates']['CNY'])
 
-    mybtc = Btc.query.all()
-    mybase = Base.query.first()
+    mybtc = mydb.session.query(Btc.symbol, func.sum(Btc.amount).label('amount')).group_by(Btc.symbol).all()
+    mybase = mydb.session.query(func.sum(Base.invest).label('invest')).first()
     mybaseinvest = mybase.invest
 
     portfolio = {}
@@ -106,6 +107,7 @@ def index():
     mybtclist = {}
     for symbol in prices:
         mybtclist[symbol['symbol']]=symbol['price']
+
 
     cnysum = float(0)
     for coin in mybtc:
@@ -124,7 +126,7 @@ def index():
 
     return render_template('index.html', prices=prices,fex=fex, mybtc=mybtc, portfolio=portfolio, cnysumround=cnysumround, mybaseinvestround=mybaseinvestround, gain=gain)
     #pyname = None#初始化id为空
-    """
+    """    
     pyform = NameForm()
     if pyform.validate_on_submit():#验证的是required参数
         #pyname = pyform.indexname.data
