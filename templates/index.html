@@ -11,11 +11,11 @@
     <br />
     <br />
     <table class="table table-striped">
-    <tread><tr><th>数字币</th><th>持仓量</th><th>CNY估值</th></tr></tread>
+    <tread><tr><th>数字币</th><th><div style="text-align:right;">持仓量</div></th><th><div style="text-align:right;">持仓成本(CNY)</div></th><th><div style="text-align:right;">市价(CNY)</div></th><th><div style="text-align:right;">盈亏</div></th></tr></tread>
     <tbody>
     {% for k,v in portfolio.items() %}
     <tr>
-    <td>{{ k }}</td><td>{{ v[0] }}</td><td>{{ v[1] }}</td>
+    <td>{{ k }}</td><td><div style="text-align:right;">{{ v[0] }}</div></td><td><div style="text-align:right;">{{ v[2] }}</div></td><td><div style="text-align:right;">{{ v[4] }}</div></td><td><div style="text-align:right;">{{ v[5] }}%</div></td>
     </tr>
     {% endfor %}
     </tbody>

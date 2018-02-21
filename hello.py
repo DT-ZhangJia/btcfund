@@ -55,6 +55,7 @@ class Btc(mydb.Model):
     symbol = mydb.Column(mydb.String(45))
     amount = mydb.Column(mydb.Float)
     date = mydb.Column(mydb.Date)
+    cnycost = mydb.Column(mydb.Float)
 
 class Base(mydb.Model):
     __tablename__ = 'base'
@@ -98,7 +99,7 @@ def index():
     res = res.read()
     fex = float(eval(res)['rates']['CNY'])
 
-    mybtc = mydb.session.query(Btc.symbol, func.sum(Btc.amount).label('amount')).group_by(Btc.symbol).all()
+    mybtc = mydb.session.query(Btc.symbol, func.sum(Btc.amount).label('amount'), func.sum(Btc.cnycost).label('cnycost')).group_by(Btc.symbol).all()
     mybase = mydb.session.query(func.sum(Base.invest).label('invest')).first()
     mybaseinvest = mybase.invest
 
@@ -112,12 +113,15 @@ def index():
     cnysum = float(0)
     for coin in mybtc:
         if coin.symbol+"USDT" in mybtclist:
-            portfolio[coin.symbol] = [coin.amount,float(mybtclist[coin.symbol+"USDT"])*float(coin.amount)*fex]
+            cnyprice = float(mybtclist[coin.symbol+"USDT"])*fex#*float(coin.amount)
+            portfolio[coin.symbol] = [coin.amount, coin.cnycost, round(float(coin.cnycost)/float(coin.amount),2), cnyprice, round(cnyprice,2),round((cnyprice*float(coin.amount)-float(coin.cnycost))/(float(coin.cnycost))*100,2)]
         elif coin.symbol+"ETH" in mybtclist:
-            portfolio[coin.symbol] = [coin.amount,float(mybtclist[coin.symbol+"ETH"])*float(mybtclist['ETHUSDT'])*float(coin.amount)*fex]
+            cnyprice = float(mybtclist[coin.symbol+"ETH"])*float(mybtclist['ETHUSDT'])*fex#*float(coin.amount)
+            portfolio[coin.symbol] = [coin.amount, coin.cnycost, round(float(coin.cnycost)/float(coin.amount),2), cnyprice, round(cnyprice,2),round((cnyprice*float(coin.amount)-float(coin.cnycost))/(float(coin.cnycost))*100,2)]
         else:
-            portfolio[coin.symbol] = [coin.amount,float(mybtclist[coin.symbol+"BTC"])*float(mybtclist['BTCUSDT'])*float(coin.amount)*fex]
-        cnysum = cnysum+portfolio[coin.symbol][1]
+            cnyprice = float(mybtclist[coin.symbol+"BTC"])*float(mybtclist['BTCUSDT'])*fex#*float(coin.amount)
+            portfolio[coin.symbol] = [coin.amount, coin.cnycost, round(float(coin.cnycost)/float(coin.amount),2), cnyprice, round(cnyprice,2),round((cnyprice*float(coin.amount)-float(coin.cnycost))/(float(coin.cnycost))*100,2)]
+        cnysum = cnysum+float(portfolio[coin.symbol][3]*float(coin.amount))
 
     gain = round((cnysum/float(mybaseinvest)-1)*100,2)
 
