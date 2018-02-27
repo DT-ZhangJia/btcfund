@@ -15,7 +15,19 @@
     <tbody>
     {% for k,v in portfolio.items() %}
     <tr>
-    <td>{{ k }}</td><td><div style="text-align:right;">{{ v[0] }}</div></td><td><div style="text-align:right;">{{ v[2] }}</div></td><td><div style="text-align:right;">{{ v[4] }}</div></td><td><div style="text-align:right;">{{ v[5] }}%</div></td>
+    <td>{{ k }}</td>
+    <td><div style="text-align:right;">{{ v[0] }}</div></td>
+    <td><div style="text-align:right;">{{ v[2] }}</div></td>
+    <td><div style="text-align:right;">{{ v[4] }}</div></td>
+    <td><div style="text-align:right;">
+            {% if v[5]<0 %}
+            <span style="color:red">{{ v[5] }}%</span>
+            {% elif v[5]>0 %}
+            <span style="color:green">{{ v[5] }}%</span>
+            {% else %}{{ v[5] }}%
+            {% endif %}
+        </div>
+    </td>
     </tr>
     {% endfor %}
     </tbody>
