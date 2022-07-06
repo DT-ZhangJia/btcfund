@@ -24,7 +24,7 @@ Flask-Moment==0.5.1
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.2
 Flask-WTF==0.14.2
-html5lib==0.999
+html5lib==0.999999999
 hyperlink==17.3.1
 idna==2.6
 incremental==17.5.0
